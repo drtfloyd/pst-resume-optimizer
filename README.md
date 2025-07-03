@@ -7,10 +7,8 @@
 
 ---
 
-✅ No login  
-✅ No tracking  
-✅ No surveillance  
-✅ Just presence
+✅ No login. No tracking. No surveillance.
+✨ Just presence.
 
 Built for jobseekers, builders, and equity-first technologists — as part of the PSA™ (Presence Signaling Architecture) framework.
 
@@ -23,7 +21,9 @@ Built for jobseekers, builders, and equity-first technologists — as part of th
 
 **Human 2 Human** is not just a phrase. It’s a stance. A signal.
 
-`PSA-PRO-456` is a **pro-level license key** to the [PSA™ Resume Optimizer](https://psa-resume-optimizer.streamlit.app/), made free and public — not for profit, but for **presence**.
+PSA-PRO-456 is a pro-level license key, made free and public —
+not for profit, but for presence.
+It unlocks the full [PSA™ Resume Optimizer](https://psa-resume-optimizer.streamlit.app/).
 
 Because too many people are falling through the cracks of broken systems.  
 Because hiring platforms track everything but see nothing.  
@@ -48,6 +48,12 @@ So this is my gift —
 — *Tuboise*  
 PSA™ Creator · Responsible AI Strategist
 
-📫 **Connect:**  
-- 📧 Email: [toolset.ranker-28@icloud.com](mailto:toolset.ranker-28@icloud.com)  
-- 💼 LinkedIn: [linkedin.com/in/tuboise](https://www.linkedin.com/in/tuboise)
+📫 **Connect with me:**  
+📧 [toolset.ranker-28@icloud.com](mailto:toolset.ranker-28@icloud.com)  
+💼 [linkedin.com/in/tuboise](https://www.linkedin.com/in/tuboise)
+
+© 2025 Presence Signaling Architecture (PSA). All rights reserved.
+
+📄 License: [View LICENSE](./LICENSE_PSA_Resume_Optimizer.md) —  
+**Freemium use permitted with attribution.**  
+**Commercial use, integration, or resale requires written permission.**

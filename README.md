@@ -1,3 +1,24 @@
+# PSA™ Resume Optimizer – v1.0 Public Release
+
+> 🔖 Version: **v1.0 – Human 2 Human Gift Edition**  
+> 🗓️ Released: July 2025  
+> 🔗 [Launch App](https://psa-resume-optimizer.streamlit.app/)  
+> 🎁 License Key: `PSA-PRO-456`
+
+---
+
+✅ No login  
+✅ No tracking  
+✅ No surveillance  
+✅ Just presence
+
+Built for jobseekers, builders, and equity-first technologists — as part of the PSA™ (Presence Signaling Architecture) framework.
+
+📫 Contact: [tuboise@protonmail.com](mailto:tuboise@protonmail.com)  
+💼 [linkedin.com/in/tuboise](https://www.linkedin.com/in/tuboise)
+
+---
+
 ## 🤝 About This Gift: `PSA-PRO-456`
 
 **Human 2 Human** is not just a phrase. It’s a stance. A signal.
@@ -28,5 +49,5 @@ So this is my gift —
 PSA™ Creator · Responsible AI Strategist
 
 📫 **Connect:**  
-- 📧 Email: [toolset.ranker-28@icloud.com](mailto:toolset.ranker-28@icloud.com)
+- 📧 Email: [toolset.ranker-28@icloud.com](mailto:toolset.ranker-28@icloud.com)  
 - 💼 LinkedIn: [linkedin.com/in/tuboise](https://www.linkedin.com/in/tuboise)

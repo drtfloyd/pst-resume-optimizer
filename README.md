@@ -54,6 +54,6 @@ PSA™ Creator · Responsible AI Strategist
 
 © 2025 Presence Signaling Architecture (PSA). All rights reserved.
 
-📄 License: [View LICENSE](./LICENSE_PSA_Resume_Optimizer.md) —  
+📄 License: [View LICENSE](./LICENSE.md) —  
 **Freemium use permitted with attribution.**  
 **Commercial use, integration, or resale requires written permission.**

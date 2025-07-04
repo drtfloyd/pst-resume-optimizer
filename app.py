@@ -1,4 +1,4 @@
-from license import get_user_mode
+from psa_license.license import get_user_mode
 import streamlit as st
 from PyPDF2 import PdfReader
 import string

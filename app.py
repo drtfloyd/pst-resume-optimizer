@@ -126,6 +126,8 @@ def run_ontological_analysis(resume_file, jd_file, ontology):
 
     overall_score = (len(all_jd_keywords.intersection(resume_words)) / len(all_jd_keywords)) * 100 if all_jd_keywords else 0
 
+    suggested_titles = soc_groups.get(best_soc_group, {}).get("example_titles", [])
+
     return {
         "predicted_soc_group": best_soc_group,
         "critical_domains": soc_groups.get(best_soc_group, {}).get("signal_domains", []),
@@ -133,32 +135,9 @@ def run_ontological_analysis(resume_file, jd_file, ontology):
         "domain_gaps": domain_gaps,
         "overall_score": overall_score,
         "resume_text": resume_text,
-        "jd_text": jd_text
+        "jd_text": jd_text,
+        "suggested_titles": suggested_titles
     }
-
-# --- Handwritten Cover Letter Fallback ---
-def fallback_cover_letter(resume_text, jd_text, gaps):
-    name = "[Your Name]"
-    company = "[Company Name]"
-    role = "[Job Title]"
-    top_missing = list({word for sub in gaps.values() for word in sub})[:5]
-    gaps_formatted = ", ".join(top_missing) if top_missing else "the key skills outlined"
-
-    letter = f"""
-Dear Hiring Team at {company},
-
-I am writing to express my interest in the {role} position at your organization. With a background that aligns with your job description and a passion for continuous growth, I believe I bring the necessary qualifications and motivation to succeed in this role.
-
-While reviewing your job description, I noticed an emphasis on competencies such as {gaps_formatted}. I am currently sharpening my expertise in these areas and am eager to bring this learning mindset to your team.
-
-Enclosed is my resume for your consideration. I welcome the opportunity to further discuss how I can contribute to your goals.
-
-Thank you for your time and consideration.
-
-Sincerely,
-{name}
-"""
-    return letter
 
 # --- SIDEBAR UI ---
 with st.sidebar:
@@ -198,7 +177,7 @@ if 'analysis_results' not in st.session_state or st.session_state.analysis_resul
     st.info("Welcome! Please enter your license key and upload your documents in the sidebar to begin.")
 else:
     results = st.session_state.analysis_results
-    tab1, tab2, tab3 = st.tabs(["📊 Strategic Scorecard", "🔑 Gap Analysis", "🤖 AI Features Coming Soon"])
+    tab1, tab2, tab3 = st.tabs(["📊 Strategic Scorecard", "🔑 Gap Analysis", "💼 Career Suggestions"])
 
     with tab1:
         st.header("📋 Analysis Summary")
@@ -232,9 +211,10 @@ else:
         for domain in sorted_domains:
             is_critical = " (Critical for this role)" if domain in critical_domains else ""
             with st.expander(f"🚨 {domain}{is_critical} - {len(domain_gaps[domain])} Gaps"):
-                st.markdown(f"<div style='display: flex; flex-wrap: wrap; gap: 5px;'>" + "".join([f"<span style='background-color: #e74c3c; color: white; padding: 5px 10px; border-radius: 15px; font-size: 14px;'>{word}</span>" for word in domain_gaps[domain]]) + "</div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='display: flex; flex-wrap: wrap; gap: 5px;'>" + "".join([f"<span style='background-color: #e74c3c; color: white; padding: 5px 10px; border-radius: 15px; font-size: 14px;'>" + word + "</span>" for word in domain_gaps[domain]]) + "</div>", unsafe_allow_html=True)
 
-    with tab3: # Corrected indentation for tab3 content
-        st.header("🚧 AI Content Studio – Coming Soon")
-        st.info("This space will host AI-powered features like auto-generated cover letters and resume rewrites based on real-time job description matching.")
-        st.caption("Stay tuned! Advanced features will unlock for PSA™ Pro and Enterprise license holders.")
+    with tab3:
+        st.header("🎯 Suggested Job Titles")
+        st.markdown("These job titles are based on your predicted career domain and signal profile.")
+        for title in results.get("suggested_titles", []):
+            st.markdown(f"- {title}")

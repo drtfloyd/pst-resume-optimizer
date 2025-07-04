@@ -114,34 +114,6 @@ def load_ontology(ontology_path="ontology.json"):
         st.error(f"FATAL: Could not read or parse ontology file: {e}")
         return None
 
-# --- Gemini 
-# --- API Integration (Production Ready) ---
-async def call_gemini_api(prompt):
-    """Helper function to call the Gemini API."""
-    api_key = st.secrets.get("GEMINI_API_KEY")
-    if not api_key:
-        # This check is now a fallback; the UI should prevent this from being called.
-        return "Error: API key not found. Please configure it in your Streamlit secrets."
-
-    try:
-        # NOTE: In a real async environment, you would use an async HTTP client like httpx.
-        # This structure is production-ready for the Streamlit environment.
-        chat_history = [{"role": "user", "parts": [{"text": prompt}]}]
-        payload = {"contents": chat_history}
-        api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
-        
-        # Placeholder logic for demonstration without a live API call
-        await asyncio.sleep(2)
-        if "cover letter" in prompt.lower():
-            return "Dear Hiring Manager,\n\nI am writing to express my keen interest in the [Job Title] position. Having reviewed the job description, I am confident that my skills in [Skill 1], [Skill 2], and experience in [Experience Area] align perfectly with your requirements. My resume provides further detail on my accomplishments. I am excited about the opportunity to contribute to your team and look forward to discussing my application further."
-        elif "resume bullet points" in prompt.lower():
-            return "- Spearheaded [Project] resulting in [Quantifiable Outcome], leveraging skills in [Keyword 1] and [Keyword 2].\n- Drove efficiency improvements by X% through the implementation of [Technology/Process], addressing key needs in [Domain].\n- Collaborated with cross-functional teams to deliver [Product/Initiative], showcasing expertise in [Keyword 3]."
-
-    except Exception as e:
-        st.error(f"An error occurred while calling the AI model: {e}")
-        return f"Error generating content: {e}"
-
-
 # --- Core Logic Engine ---
 def extract_text_from_file(file):
     """Extracts text from an uploaded PDF or TXT file."""
@@ -206,14 +178,13 @@ def run_ontological_analysis(resume_file, jd_file, ontology):
 # --- Placeholder functions for other features ---
 async def generate_cover_letter(resume_text, jd_text, gaps):
     flat_gaps = [word for sublist in gaps.values() for word in sublist]
-    prompt = f"Based on the following resume, job description, and list of missing keywords ({', '.join(flat_gaps[:10])}), write a professional and concise cover letter. The tone should be confident but not arrogant. It must strategically incorporate some of the missing keywords to address the gaps.\n\nJOB DESCRIPTION:\n---\n{jd_text[:1500]}\n---\n\nRESUME:\n---\n{resume_text[:1500]}\n---"
-    return await call_gemini_api(prompt)
+    prompt = f"Based on the following resume, job description, and list of missing keywords ({', '.join(flat_gaps[:10])}), write a professional and concise cover letter."
+    return "📝 [AI feature temporarily disabled – Gemini removed]"
 
 async def generate_resume_rebuild(resume_text, jd_text, gaps):
     flat_gaps = [word for sublist in gaps.values() for word in sublist]
-    prompt = f"Analyze the following resume and job description. The resume is missing these keywords: {', '.join(flat_gaps[:10])}. Generate three specific, action-oriented resume bullet points that the user could adapt. The bullet points should be impactful and incorporate some of the missing keywords. Return the response as a simple list of bullet points, each starting with a hyphen.\n\nJOB DESCRIPTION:\n---\n{jd_text[:1500]}\n---\n\nRESUME:\n---\n{resume_text[:1500]}\n---"
-    response = await call_gemini_api(prompt)
-    return response.strip().split('\n')
+    prompt = f"Analyze the following resume and job description. The resume is missing these keywords: {', '.join(flat_gaps[:10])}. Generate three specific, rewritten bullet points."
+    return ["🛠 Resume rebuild feature temporarily offline – Gemini removed"]
 
 # --- SIDEBAR UI ---
 with st.sidebar:

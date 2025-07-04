@@ -15,31 +15,7 @@ import requests
 
 # --- Mistral API Call Function ---
 async def call_mistral_api(prompt):
-    """Call open-weight Mistral 7B from HuggingFace."""
-    api_key = st.secrets.get("huggingface", {}).get("api_key")
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens": 300,
-            "temperature": 0.7
-        }
-    }
-
-    try:
-     response = requests.post(
-    "https://api-inference.huggingface.co/models/google/flan-t5-large",
-    headers=headers,
-    json=payload
-)
-
-      # ---- FLAN-T5 Call Function ----
-async def call_mistral_api(prompt):
-    """Call open-weight FLAN-T5 via HuggingFace."""
+    """Call open-weight model (Flan-T5) from Hugging Face."""
     api_key = st.secrets.get("huggingface", {}).get("api_key")
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -61,25 +37,25 @@ async def call_mistral_api(prompt):
             json=payload
         )
 
-        # ---- ADD THESE DEBUGGING LINES ----
+        # --- DEBUGGING INFO ---
         print(f"Hugging Face API Status Code: {response.status_code}")
         print(f"Hugging Face API Raw Response: {response.text}")
-        # ---- END DEBUGGING LINES ----
 
+        # Raise for bad responses
         response.raise_for_status()
 
         data = response.json()
         if isinstance(data, list) and "generated_text" in data[0]:
             return data[0]["generated_text"]
         else:
-            return f"❗️ FLAN-T5 returned unexpected JSON format: {data}"
+            return f"⚠️ Mistral returned unexpected JSON format: {data}"
 
     except requests.exceptions.HTTPError as http_err:
-        return f"❌ HTTP Error calling FLAN-T5: {http_err} – Full response: {response.text}"
+        return f"❌ HTTP Error calling Mistral: {http_err} – Full response: {response.text}"
     except json.JSONDecodeError as json_err:
-        return f"❌ JSON Decoding Error from FLAN-T5: {json_err} – Raw response: {response.text}"
+        return f"❌ JSON Decoding Error from Mistral: {json_err} – Raw response: {response.text}"
     except Exception as e:
-        return f"❌ General Error calling FLAN-T5: {e}"
+        return f"❌ General Error calling Mistral: {e}"
 
 
 # --- Custom CSS for a Polished Look ---

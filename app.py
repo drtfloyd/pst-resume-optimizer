@@ -242,7 +242,8 @@ write a professional and concise cover letter draft tailored to the role:
 # --- Resume Rebuilder using Mistral ---
 async def generate_resume_rebuild(resume_text, jd_text, gaps):
     flat_gaps = [word for sublist in gaps.values() for word in sublist]
-    prompt = f"""Analyze the following resume and job description. The resume is missing these keywords: {', '.join(flat_gaps[:10])}.
+    prompt = f"""Analyze the following resume and job description. 
+The resume is missing these keywords: {', '.join(flat_gaps[:10])}.
 Suggest three specific resume bullet point rewrites or additions that incorporate those missing skills.
 
 [Resume]
@@ -250,7 +251,8 @@ Suggest three specific resume bullet point rewrites or additions that incorporat
 
 [Job Description]
 {jd_text}
-"""
+"""  # ← ADD THIS LINE
+
     from mistral_api import call_mistral_api
     response = await call_mistral_api(prompt)
     return response.strip().split('\n')

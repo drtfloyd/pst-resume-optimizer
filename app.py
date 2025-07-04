@@ -90,9 +90,6 @@ elif current_license_tier == "freemium":
     
     # 👇 Optional: limited feature set here
 
-elif license_key:  # something was entered but not valid
-    st.error("🚫 Invalid license key. Please check and try again.")
-
 else:
     st.warning("🔒 Enter your PSA™ License Key to continue.")
 

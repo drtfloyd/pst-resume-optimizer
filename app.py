@@ -321,6 +321,7 @@ else:
         st.header("AI-Powered Content Generation Studio")
         
         st.subheader("✉️ Cover Letter Generator")
+        api_key_present = "api_key" in st.secrets.get("huggingface", {}) and st.secrets["huggingface"]["api_key"] != ""        
         if st.button("Generate Cover Letter", disabled=not api_key_present):
             with st.spinner("Drafting your cover letter..."):
                 st.session_state.cover_letter = asyncio.run(generate_cover_letter(results['resume_text'], results['jd_text'], results['domain_gaps']))

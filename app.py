@@ -1,5 +1,6 @@
 from psa_license.license import get_user_mode
 import streamlit as st
+
 from PyPDF2 import PdfReader
 import string
 from io import BytesIO
@@ -10,13 +11,10 @@ import os
 import pandas as pd
 import asyncio
 
-# --- Gemini API Key Verification ---
-api_key = st.secrets.get("api", {}).get("gemini_api_key")
+# --- Mistral (Hugging Face) API Key Verification ---
+api_key = st.secrets.get("huggingface", {}).get("api_key")
 if not api_key:
-    st.warning("🔐 Please add your Gemini API key to your Streamlit secrets to enable AI content generation.")
-    st.stop()
-if not api_key:
-    st.warning("🔐 Please add your Gemini API key to your Streamlit secrets to enable AI content generation.")
+    st.warning("🔐 Please add your Hugging Face API key to your Streamlit secrets.")
     st.stop()
 
 # --- Page & UI Configuration ---

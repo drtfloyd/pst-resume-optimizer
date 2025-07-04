@@ -31,36 +31,57 @@ async def call_mistral_api(prompt):
     }
 
     try:
+     response = requests.post(
+    "https://api-inference.huggingface.co/models/google/flan-t5-large",
+    headers=headers,
+    json=payload
+)
+
+      # ---- FLAN-T5 Call Function ----
+async def call_mistral_api(prompt):
+    """Call open-weight FLAN-T5 via HuggingFace."""
+    api_key = st.secrets.get("huggingface", {}).get("api_key")
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "inputs": prompt,
+        "parameters": {
+            "max_new_tokens": 300,
+            "temperature": 0.7
+        }
+    }
+
+    try:
         response = requests.post(
-            "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1",
+            "https://api-inference.huggingface.co/models/google/flan-t5-large",
             headers=headers,
             json=payload
         )
 
-        # --- ADD THESE DEBUGGING LINES ---
+        # ---- ADD THESE DEBUGGING LINES ----
         print(f"Hugging Face API Status Code: {response.status_code}")
         print(f"Hugging Face API Raw Response: {response.text}")
-        # --- END DEBUGGING LINES ---
+        # ---- END DEBUGGING LINES ----
 
-        # Raise an HTTPError for bad responses (4xx or 5xx status codes)
         response.raise_for_status()
 
         data = response.json()
         if isinstance(data, list) and "generated_text" in data[0]:
             return data[0]["generated_text"]
         else:
-            # If the response is valid JSON but not in the expected format
-            return f"⚠️ Mistral returned unexpected JSON format: {data}"
+            return f"❗️ FLAN-T5 returned unexpected JSON format: {data}"
+
     except requests.exceptions.HTTPError as http_err:
-        # This catches errors like 401, 404, 500, etc.
-        return f"❌ HTTP Error calling Mistral: {http_err} - Full response: {response.text}"
+        return f"❌ HTTP Error calling FLAN-T5: {http_err} – Full response: {response.text}"
     except json.JSONDecodeError as json_err:
-        # This catches the 'Expecting value' error specifically
-        return f"❌ JSON Decoding Error from Mistral: {json_err} - Raw response: {response.text}"
+        return f"❌ JSON Decoding Error from FLAN-T5: {json_err} – Raw response: {response.text}"
     except Exception as e:
-        # Catch any other unexpected errors
-        return f"❌ General Error calling Mistral: {e}"
-        
+        return f"❌ General Error calling FLAN-T5: {e}"
+
+
 # --- Custom CSS for a Polished Look ---
 st.markdown("""
 <style>

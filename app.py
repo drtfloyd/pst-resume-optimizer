@@ -11,23 +11,18 @@ import os
 import pandas as pd
 import asyncio
 
-import requests
-
 # --- Custom CSS for a Polished Look ---
 st.markdown("""
 <style>
-    /* Main container styling */
     .main .block-container {
         padding-top: 2rem;
         padding-bottom: 2rem;
         padding-left: 5rem;
         padding-right: 5rem;
     }
-    /* Style headers */
     h1, h2, h3 {
-        color: #2c3e50; /* Dark blue-gray for a professional look */
+        color: #2c3e50;
     }
-    /* Style buttons */
     .stButton>button {
         border-radius: 8px;
         border: 1px solid #2c3e50;
@@ -43,7 +38,6 @@ st.markdown("""
     .stButton>button:focus {
         box-shadow: 0 0 0 2px #3498db40;
     }
-    /* Style file uploader */
     .stFileUploader {
         border: 2px dashed #bdc3c7;
         border-radius: 8px;
@@ -53,7 +47,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- License Entry with State Handling ---
 if "license_key" not in st.session_state:
     st.session_state["license_key"] = ""
 
@@ -63,36 +56,20 @@ license_input = st.sidebar.text_input(
     type="password"
 )
 
-# Update session state on change
 if license_input != st.session_state["license_key"]:
     st.session_state["license_key"] = license_input
 
-# Run license check
 current_license_tier = get_user_mode(st.session_state["license_key"])
 
-# --- License Check Logic ---
 if current_license_tier in ["pro", "enterprise"]:
     st.success("✅ Pro License Verified!")
-    
-    # 👇 Unlock full functionality here
-    # e.g., file upload, ontology loader, evaluation logic
-    # Example:
-    # resume_file = st.file_uploader("Upload your resume...")
-    # if resume_file:
-    #     process_resume(resume_file)
-
 elif current_license_tier == "freemium":
     st.info("🟢 Freemium access granted. Upgrade for more features.")
-    
-    # 👇 Optional: limited feature set here
-
 else:
     st.warning("🔒 Enter your PSA™ License Key to continue.")
 
-# --- Production-Grade Ontology Loader ---
 @st.cache_data(show_spinner="Loading keyword ontology...")
 def load_ontology(ontology_path="ontology.json"):
-    """Loads the full structured ontology from the external JSON file."""
     if not os.path.exists(ontology_path):
         st.error(f"FATAL: Ontology file not found at '{ontology_path}'.")
         return None
@@ -103,13 +80,10 @@ def load_ontology(ontology_path="ontology.json"):
         st.error(f"FATAL: Could not read or parse ontology file: {e}")
         return None
 
-# --- Core Logic Engine ---
 def extract_text_from_file(file):
-    """Extracts text from an uploaded PDF or TXT file."""
     if file is None: return ""
     try:
         if file.type == "application/pdf":
-            # Correctly handle multi-page PDFs
             reader = PdfReader(file)
             return "\n".join([page.extract_text() or "" for page in reader.pages])
         else:
@@ -118,21 +92,19 @@ def extract_text_from_file(file):
         st.warning(f"⚠️ Failed to extract text: {e}"); return ""
 
 def clean_and_extract_words(text):
-    """A helper function to clean text and extract a set of unique words."""
     text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text).lower()
     text = re.sub(r'https?://\S+|\S+@\S+', '', text)
     text = re.sub(f'[{re.escape(string.punctuation)}0-9]', '', text)
     return {word for word in text.split() if len(word) > 2}
 
 def run_ontological_analysis(resume_file, jd_file, ontology):
-    """Performs a deep, context-aware analysis using the structured ontology."""
     resume_text = extract_text_from_file(resume_file)
     jd_text = extract_text_from_file(jd_file)
     if not resume_text or not jd_text: return None
 
     resume_words = clean_and_extract_words(resume_text)
     jd_words = clean_and_extract_words(jd_text)
-    
+
     signal_domains = ontology.get("SignalDomains", {})
     soc_groups = ontology.get("SOC_Groups", {})
 
@@ -164,60 +136,29 @@ def run_ontological_analysis(resume_file, jd_file, ontology):
         "jd_text": jd_text
     }
 
-# --- Placeholder functions for other features ---
-# --- Cover Letter Generator using Mistral ---
-# --- Placeholder functions for other features ---
-# --- Cover Letter Generator using Mistral ---
-async def generate_cover_letter(resume_text, jd_text, gaps):
-    flat_gaps = [word for sublist in gaps.values() for word in sublist]
-    # FIX: Handle empty flat_gaps for clearer prompt
-    keywords_for_prompt = ', '.join(flat_gaps[:10])
-    if not keywords_for_prompt:
-        keywords_for_prompt = "no specific keywords identified as missing"
+# --- Handwritten Cover Letter Fallback ---
+def fallback_cover_letter(resume_text, jd_text, gaps):
+    name = "[Your Name]"
+    company = "[Company Name]"
+    role = "[Job Title]"
+    top_missing = list({word for sub in gaps.values() for word in sub})[:5]
+    gaps_formatted = ", ".join(top_missing) if top_missing else "the key skills outlined"
 
-    prompt = f"""Based on the following resume, job description, and list of missing keywords ({keywords_for_prompt}),
-write a professional and concise cover letter draft tailored to the role:
+    letter = f"""
+Dear Hiring Team at {company},
 
-[Resume]
-{resume_text}
+I am writing to express my interest in the {role} position at your organization. With a background that aligns with your job description and a passion for continuous growth, I believe I bring the necessary qualifications and motivation to succeed in this role.
 
-[Job Description]
-{jd_text}
+While reviewing your job description, I noticed an emphasis on competencies such as {gaps_formatted}. I am currently sharpening my expertise in these areas and am eager to bring this learning mindset to your team.
+
+Enclosed is my resume for your consideration. I welcome the opportunity to further discuss how I can contribute to your goals.
+
+Thank you for your time and consideration.
+
+Sincerely,
+{name}
 """
-    # Assuming mistral_api is a local module or correctly imported
-    # from mistral_api import call_mistral_api # This line is redundant if call_mistral_api is defined in the same file.
-    response = await call_mistral_api(prompt)
-    # The original code for generate_cover_letter truncated here.
-    # Assuming it should return the response as a list of lines for consistency with generate_resume_rebuild.
-    return response.strip().split('\n')
-
-
-# --- Resume Rebuilder using Mistral ---
-async def generate_resume_rebuild(resume_text, jd_text, gaps):
-    flat_gaps = [word for sublist in gaps.values() for word in sublist]
-    # FIX: Handle empty flat_gaps for clearer prompt
-    keywords_for_prompt = ', '.join(flat_gaps[:10])
-    
-    # Adjusting the prompt based on whether there are missing keywords
-    if not keywords_for_prompt:
-        keywords_instruction = "No specific keywords were identified as missing from the resume based on the job description."
-    else:
-        keywords_instruction = f"The resume is missing these keywords: {keywords_for_prompt}."
-
-    prompt = f"""Analyze the following resume and job description.
-{keywords_instruction}
-Suggest three specific resume bullet point rewrites or additions that incorporate those missing skills.
-
-[Resume]
-{resume_text}
-
-[Job Description]
-{jd_text}
-"""
-    # Assuming mistral_api is a local module or correctly imported
-    # from mistral_api import call_mistral_api # This line is redundant if call_mistral_api is defined in the same file.
-    response = await call_mistral_api(prompt)
-    return response.strip().split('\n')
+    return letter
 
 # --- SIDEBAR UI ---
 with st.sidebar:
@@ -263,17 +204,17 @@ else:
         st.header("📋 Analysis Summary")
         st.metric(label="Overall Resume Match Score", value=f"{results['overall_score']:.1f}%", help="This score represents the overall percentage of relevant keywords from the job description that were found in your resume.")
         st.progress(int(results['overall_score']))
-        
+
         st.subheader("Predicted Job Category")
         soc_group = results['predicted_soc_group']
         st.info(f"**{soc_group}**" if soc_group else "Could not determine job category.")
-        
+
         st.subheader("Your Signal Domain Scores")
         st.caption("This shows your alignment with key competency areas. Focus on improving the 'Critical' domains for this role.")
-        
+
         critical_domains = set(results['critical_domains'])
         domain_scores = results['domain_scores']
-        
+
         for domain, score in sorted(domain_scores.items(), key=lambda item: item[1], reverse=True):
             if domain in critical_domains:
                 st.markdown(f"**{domain} (Critical)**")
@@ -284,35 +225,20 @@ else:
     with tab2:
         st.header("Keyword Gap Analysis")
         st.info("This shows important keywords from the job description that are missing from your resume, grouped by their strategic domain.")
-        
+
         domain_gaps = results['domain_gaps']
         sorted_domains = sorted(domain_gaps.keys(), key=lambda d: d not in critical_domains)
-        
+
         for domain in sorted_domains:
             is_critical = " (Critical for this role)" if domain in critical_domains else ""
             with st.expander(f"🚨 {domain}{is_critical} - {len(domain_gaps[domain])} Gaps"):
                 st.markdown(f"<div style='display: flex; flex-wrap: wrap; gap: 5px;'>" + "".join([f"<span style='background-color: #e74c3c; color: white; padding: 5px 10px; border-radius: 15px; font-size: 14px;'>{word}</span>" for word in domain_gaps[domain]]) + "</div>", unsafe_allow_html=True)
 
     with tab3:
-        st.header("AI-Powered Content Generation Studio")
-        
+        st.header("AI Content Studio (Fallback Mode)")
+
         st.subheader("✉️ Cover Letter Generator")
-        api_key_present = "api_key" in st.secrets.get("huggingface", {}) and st.secrets["huggingface"]["api_key"] != ""        
-        if st.button("Generate Cover Letter", disabled=not api_key_present):
-            with st.spinner("Drafting your cover letter..."):
-                st.session_state.cover_letter = asyncio.run(generate_cover_letter(results['resume_text'], results['jd_text'], results['domain_gaps']))
+        if st.button("Generate Cover Letter"):
+            st.session_state.cover_letter = fallback_cover_letter(results['resume_text'], results['jd_text'], results['domain_gaps'])
         if 'cover_letter' in st.session_state:
             st.text_area("Generated Cover Letter:", value=st.session_state.cover_letter, height=300)
-
-        st.markdown("---")
-        
-        st.subheader("🧠 Resume Suggestions")
-        if st.button("Generate Resume Suggestions", disabled=not api_key_present):
-            with st.spinner("Developing resume suggestions..."):
-                st.session_state.resume_suggestions = asyncio.run(generate_resume_rebuild(results['resume_text'], results['jd_text'], results['domain_gaps']))
-        if 'resume_suggestions' in st.session_state:
-            st.info("Here are some action-oriented bullet points you can adapt for your resume:")
-            for line in st.session_state.resume_suggestions:
-                st.markdown(f"{line}")
-        
-

@@ -75,7 +75,8 @@ def extract_pdf_text(file):
 
 def generate_signal_table(resume_file, jd_file):
     """
-    Analyzes resume against job description for keyword matching with improved cleaning.
+    Analyzes resume against job description for keyword matching with improved cleaning
+    and word segmentation to fix "jumbled" words.
     """
     resume_text = extract_pdf_text(resume_file)
     jd_text = extract_pdf_text(jd_file)
@@ -83,39 +84,86 @@ def generate_signal_table(resume_file, jd_file):
     if not resume_text or not jd_text:
         return [], 0.0, []
 
-    # Comprehensive list of stopwords
-    stopwords = set([
-        "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "as", "at",
-        "be", "because", "been", "before", "being", "below", "between", "both", "but", "by",
-        "can", "could", "did", "do", "does", "doing", "down", "during",
-        "each", "few", "for", "from", "further",
-        "had", "has", "have", "having", "he", "her", "here", "hers", "herself", "him", "himself", "his", "how",
-        "i", "if", "in", "into", "is", "it", "its", "itself",
-        "just", "me", "more", "most", "my", "myself",
-        "no", "nor", "not", "now", "of", "off", "on", "once", "only", "or", "other", "our", "ours", "ourselves", "out", "over", "own",
-        "s", "same", "she", "should", "so", "some", "such",
-        "t", "than", "that", "the", "their", "theirs", "them", "themselves", "then", "there", "these", "they", "this", "those", "through", "to", "too",
-        "under", "until", "up",
-        "very", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom", "why", "will", "with", "would",
-        "you", "your", "yours", "yourself", "yourselves",
-        "experience", "work", "company", "job", "role", "skills", "responsibilities", "requirements", "etc"
+    # Dictionary of common professional & technical terms for word segmentation
+    WORD_SEGMENTATION_DICT = set([
+        "access", "accessibility", "action", "active", "administration", "advanced", "agile", "ai", "alignment", "alpha", "america", "analysis", "analyst", "analytics", "and", "api", "application", "approach", "architect", "architecture", "artificial", "associate", "assurance", "ats", "automation", "aws",
+        "backend", "bachelor", "benefits", "beta", "brand", "budget", "build", "business",
+        "candidate", "career", "center", "certified", "change", "client", "cloud", "code", "collaboration", "commercial", "communication", "compensation", "competitive", "compliance", "computer", "configuration", "consultant", "content", "continuity", "continuous", "contract", "control", "core", "corporate", "cost", "creative", "crm", "cross", "culture", "custom", "customer",
+        "data", "database", "decision", "delivery", "design", "designer", "develop", "developer", "development", "devops", "digital", "director", "distribution", "diversity", "driven",
+        "education", "effectiveness", "efficiency", "eligibility", "employee", "employment", "empower", "empowering", "end", "engagement", "engineer", "engineering", "enterprise", "environment", "equity", "etc", "evaluation", "events", "executive", "experience",
+        "facilitate", "feature", "federal", "feedback", "finance", "financial", "for", "forecast", "framework", "frontend", "full", "functional",
+        "gap", "global", "governance", "graduate", "growth",
+        "health", "help", "high", "hiring",
+        "impact", "implementation", "improvement", "in", "inclusion", "industry", "information", "infrastructure", "initiative", "innovation", "insights", "integration", "intelligence", "interaction", "interface", "internal", "international",
+        "java", "javascript", "job", "json", "key",
+        "language", "launch", "lead", "leader", "leadership", "learning", "legal", "leverage", "lifecycle", "linkedin", "linux", "location",
+        "machine", "maintenance", "making", "manage", "management", "manager", "manual", "market", "marketing", "master", "matching", "media", "meeting", "methodology", "metrics", "microsoft", "migration", "mobile", "model", "modeling", "modern", "monitoring",
+        "network", "new", "of", "offer", "office", "on", "operations", "opportunity", "optimization", "oracle", "organization", "organizational", "owner", "ownership",
+        "partner", "partnership", "payment", "people", "performance", "platform", "policy", "portfolio", "position", "presence", "president", "price", "pricing", "privacy", "problem", "process", "product", "professional", "program", "project", "protection", "prototyping", "python", "quality",
+        "recruiter", "recruitment", "regulatory", "relations", "relationship", "release", "remote", "reporting", "requirements", "research", "resource", "results", "resume", "revenue", "risk", "roadmap", "role",
+        "saas", "sales", "scalability", "schedule", "science", "scientist", "score", "scorecard", "scraping", "scripting", "search", "security", "senior", "service", "services", "signal", "signaling", "site", "skill", "skills", "social", "software", "solutions", "specialist", "sql", "stack", "stakeholder", "standard", "storage", "strategic", "strategy", "structure", "success", "support", "system", "systems",
+        "talent", "team", "technical", "technology", "testing", "that", "the", "tier", "time", "to", "tool", "tools", "top", "total", "training", "transformation", "troubleshooting",
+        "ui", "understanding", "unit", "university", "us", "user", "ux",
+        "validation", "value", "vendor", "version", "vice", "visibility", "vision",
+        "web", "website", "weighted", "with", "work", "workflow"
     ])
 
+    # Comprehensive list of stopwords
+    stopwords = set([
+        "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "as", "at", "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can", "could", "did", "do", "does", "doing", "down", "during", "each", "few", "for", "from", "further", "had", "has", "have", "having", "he", "her", "here", "hers", "herself", "him", "himself", "his", "how", "i", "if", "in", "into", "is", "it", "its", "itself", "just", "me", "more", "most", "my", "myself", "no", "nor", "not", "now", "of", "off", "on", "once", "only", "or", "other", "our", "ours", "ourselves", "out", "over", "own", "s", "same", "she", "should", "so", "some", "such", "t", "than", "that", "the", "their", "theirs", "them", "themselves", "then", "there", "these", "they", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom", "why", "will", "with", "would", "you", "your", "yours", "yourself", "yourselves", "experience", "work", "company", "job", "role", "skills", "responsibilities", "requirements", "etc"
+    ])
+
+    def segment(word, dictionary):
+        """Greedily segments a word into parts found in the dictionary."""
+        word = word.lower()
+        if not word: return []
+        if word in segment.memo: return segment.memo[word]
+        
+        for i in range(len(word), 1, -1):
+            prefix, suffix = word[:i], word[i:]
+            if prefix in dictionary:
+                segmented_suffix = segment(suffix, dictionary)
+                if segmented_suffix is not None:
+                    result = [prefix] + segmented_suffix
+                    segment.memo[word] = result
+                    return result
+        
+        if word in dictionary:
+            segment.memo[word] = [word]
+            return [word]
+            
+        segment.memo[word] = None
+        return None
+
+    segment.memo = {} # Initialize memoization cache
+
     def clean_and_extract_words(text):
-        # 1. Split jumbled words (e.g., "empoweringAnd" -> "empowering And")
+        # 1. Split jumbled words based on case changes (e.g., "wordOne" -> "word One")
         text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
         # 2. Convert to lowercase
         text = text.lower()
-        # 3. Remove URLs
-        text = re.sub(r'https?://\S+', '', text)
-        # 4. Remove email addresses
-        text = re.sub(r'\S+@\S+', '', text)
-        # 5. Remove punctuation and numbers
+        # 3. Remove URLs and emails
+        text = re.sub(r'https?://\S+|\S+@\S+', '', text)
+        # 4. Remove punctuation and numbers
         text = re.sub(f'[{re.escape(string.punctuation)}0-9]', '', text)
-        # 6. Split into words
+        # 5. Split into initial words
         words = text.split()
+        
+        # 6. Segment jumbled words and build final word list
+        final_words = set()
+        for word in words:
+            # Only try to segment longer words
+            if len(word) > 10:
+                segmented = segment(word, WORD_SEGMENTATION_DICT)
+                if segmented:
+                    final_words.update(segmented)
+                else:
+                    final_words.add(word) # Keep original if segmentation fails
+            else:
+                final_words.add(word)
+
         # 7. Remove stopwords and short words
-        meaningful_words = [word for word in words if word not in stopwords and len(word) > 2]
+        meaningful_words = [word for word in final_words if word not in stopwords and len(word) > 2]
         return set(meaningful_words)
 
     resume_words = clean_and_extract_words(resume_text)

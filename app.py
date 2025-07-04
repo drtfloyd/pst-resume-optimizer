@@ -15,6 +15,7 @@ import requests
 
 # --- Mistral API Call Function ---
 async def call_mistral_api(prompt):
+    """Call open-weight Mistral 7B from HuggingFace."""
     api_key = st.secrets.get("huggingface", {}).get("api_key")
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -35,21 +36,31 @@ async def call_mistral_api(prompt):
             headers=headers,
             json=payload
         )
+
+        # --- ADD THESE DEBUGGING LINES ---
+        print(f"Hugging Face API Status Code: {response.status_code}")
+        print(f"Hugging Face API Raw Response: {response.text}")
+        # --- END DEBUGGING LINES ---
+
+        # Raise an HTTPError for bad responses (4xx or 5xx status codes)
+        response.raise_for_status()
+
         data = response.json()
         if isinstance(data, list) and "generated_text" in data[0]:
             return data[0]["generated_text"]
         else:
-            return f"⚠️ Mistral returned: {data}"
+            # If the response is valid JSON but not in the expected format
+            return f"⚠️ Mistral returned unexpected JSON format: {data}"
+    except requests.exceptions.HTTPError as http_err:
+        # This catches errors like 401, 404, 500, etc.
+        return f"❌ HTTP Error calling Mistral: {http_err} - Full response: {response.text}"
+    except json.JSONDecodeError as json_err:
+        # This catches the 'Expecting value' error specifically
+        return f"❌ JSON Decoding Error from Mistral: {json_err} - Raw response: {response.text}"
     except Exception as e:
-        return f"❌ Error calling Mistral: {e}"
-
-# --- Page & UI Configuration ---
-st.set_page_config(
-    page_title="PSA™ Resume Optimizer",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
+        # Catch any other unexpected errors
+        return f"❌ General Error calling Mistral: {e}"
+        
 # --- Custom CSS for a Polished Look ---
 st.markdown("""
 <style>

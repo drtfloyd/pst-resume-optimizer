@@ -13,7 +13,7 @@ import asyncio
 
 import requests
 
-# --- Mistral API Call Function ---
+# --- Flan-T5 API Call Function ---
 async def call_mistral_api(prompt):
     """Call open-weight model (Flan-T5) from Hugging Face."""
     api_key = st.secrets.get("huggingface", {}).get("api_key")

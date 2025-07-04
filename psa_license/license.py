@@ -20,11 +20,12 @@ def verify_license_key(key: str) -> bool:
         st.error(f"License validation failed: An unexpected error occurred: {e}")
         return False
 
-def get_user_mode(key: str) -> str:
-    """
-    Determines the user's license tier ("enterprise", "pro", "freemium", "invalid")
-    based on the license key and its prefix.
-    """
+def get_user_mode(license_key: str):
+    """Verifies license key against secrets.toml and returns license tier."""
+    import streamlit as st
+    license_tiers = st.secrets.get("psa", {}).get("license_tiers", {})
+    return license_tiers.get(license_key.strip(), None)
+    
     # First, verify if the key is generally valid (exists in our list of known keys)
     if verify_license_key(key):
         # Now, determine the specific tier based on prefixes

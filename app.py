@@ -13,9 +13,9 @@ import asyncio
 
 import requests
 
-# --- Flan-T5 API Call Function (PATCHED for flan-t5-xl) ---
+# --- Flan-T5 API Call Function (PATCHED to flan-t5-base) ---
 async def call_mistral_api(prompt):
-    """Call open-weight model (Flan-T5-XL) from Hugging Face (patched from flan-t5-large)."""
+    """Call open-weight model (Flan-T5-Base) from Hugging Face Inference API."""
     api_key = st.secrets.get("huggingface", {}).get("api_key")
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -25,37 +25,34 @@ async def call_mistral_api(prompt):
     payload = {
         "inputs": prompt,
         "parameters": {
-            "max_new_tokens": 300,
+            "max_new_tokens": 256,
             "temperature": 0.7
         }
     }
 
     try:
         response = requests.post(
-            "https://api-inference.huggingface.co/models/google/flan-t5-xl",
+            "https://api-inference.huggingface.co/models/google/flan-t5-base",
             headers=headers,
             json=payload
         )
 
-        # --- DEBUGGING INFO ---
-        print(f"Hugging Face API Status Code: {response.status_code}")
-        print(f"Hugging Face API Raw Response: {response.text}")
-
-        # Raise for bad responses
+        print(f"HF Status Code: {response.status_code}")
+        print(f"HF Raw Response: {response.text}")
         response.raise_for_status()
 
         data = response.json()
         if isinstance(data, list) and "generated_text" in data[0]:
             return data[0]["generated_text"]
         else:
-            return f"⚠️ Hugging Face returned unexpected JSON format: {data}"
+            return f"⚠️ Unexpected JSON format: {data}"
 
     except requests.exceptions.HTTPError as http_err:
-        return f"❌ HTTP Error calling HF Inference: {http_err} – Full response: {response.text}"
+        return f"❌ HTTP Error: {http_err} – Full response: {response.text}"
     except json.JSONDecodeError as json_err:
-        return f"❌ JSON Decoding Error: {json_err} – Raw response: {response.text}"
+        return f"❌ JSON Decode Error: {json_err} – Raw response: {response.text}"
     except Exception as e:
-        return f"❌ General Error calling HF Inference: {e}"
+        return f"❌ General Error: {e}"
         
 # --- Custom CSS for a Polished Look ---
 st.markdown("""

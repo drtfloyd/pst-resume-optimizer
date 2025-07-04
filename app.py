@@ -97,7 +97,7 @@ def load_ontology(ontology_path="ontology.json"):
         return None
 
 # --- Gemini 
-API Integration (Production Ready) ---
+# --- API Integration (Production Ready) ---
 async def call_gemini_api(prompt):
     """Helper function to call the Gemini API."""
     api_key = st.secrets.get("GEMINI_API_KEY")

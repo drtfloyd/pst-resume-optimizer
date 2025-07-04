@@ -13,37 +13,6 @@ import asyncio
 
 import requests
 
-async def call_mistral_api(prompt):
-    """Call open-weight Mistral 7B from HuggingFace."""
-    api_key = st.secrets.get("huggingface", {}).get("api_key")
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens": 300,
-            "temperature": 0.7
-        }
-    }
-
-    try:
-        response = requests.post(
-            "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1",
-            headers=headers,
-            json=payload
-        )
-        return response.json()[0]["generated_text"]
-    except Exception as e:
-        return f"❌ Error calling Mistral: {e}"
-# --- Mistral (Hugging Face) API Key Verification ---
-api_key = st.secrets.get("huggingface", {}).get("api_key")
-if not api_key:
-    st.warning("🔐 Please add your Hugging Face API key to your Streamlit secrets.")
-    st.stop()
-
 # --- Mistral API Call Function ---
 async def call_mistral_api(prompt):
     api_key = st.secrets.get("huggingface", {}).get("api_key")

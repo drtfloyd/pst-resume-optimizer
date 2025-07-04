@@ -102,17 +102,19 @@ def generate_signal_table(resume_file, jd_file):
     ])
 
     def clean_and_extract_words(text):
-        # 1. Convert to lowercase
+        # 1. Split jumbled words (e.g., "empoweringAnd" -> "empowering And")
+        text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
+        # 2. Convert to lowercase
         text = text.lower()
-        # 2. Remove URLs
+        # 3. Remove URLs
         text = re.sub(r'https?://\S+', '', text)
-        # 3. Remove email addresses
+        # 4. Remove email addresses
         text = re.sub(r'\S+@\S+', '', text)
-        # 4. Remove punctuation and numbers
+        # 5. Remove punctuation and numbers
         text = re.sub(f'[{re.escape(string.punctuation)}0-9]', '', text)
-        # 5. Split into words
+        # 6. Split into words
         words = text.split()
-        # 6. Remove stopwords and short words
+        # 7. Remove stopwords and short words
         meaningful_words = [word for word in words if word not in stopwords and len(word) > 2]
         return set(meaningful_words)
 

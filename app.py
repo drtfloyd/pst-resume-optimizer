@@ -56,12 +56,31 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# --- License Entry ---
+license_key = st.sidebar.text_input("Enter your PSA™ License Key", type="password")
+current_license_tier = get_user_mode(license_key)
 
-# --- License Key Utilities ---
-def get_user_mode(license_key):
-    """Verifies license key against secrets."""
-    license_tiers = st.secrets.get("psa", {}).get("license_tiers", {})
-    return license_tiers.get(license_key.strip(), None)
+# --- License Check Logic ---
+if current_license_tier in ["pro", "enterprise"]:
+    st.success("✅ Pro License Verified!")
+    
+    # 👇 Unlock full functionality here
+    # e.g., file upload, ontology loader, evaluation logic
+    # Example:
+    # resume_file = st.file_uploader("Upload your resume...")
+    # if resume_file:
+    #     process_resume(resume_file)
+
+elif current_license_tier == "freemium":
+    st.info("🟢 Freemium access granted. Upgrade for more features.")
+    
+    # 👇 Optional: limited feature set here
+
+elif license_key:  # something was entered but not valid
+    st.error("🚫 Invalid license key. Please check and try again.")
+
+else:
+    st.warning("🔒 Enter your PSA™ License Key to continue.")
 
 # --- Production-Grade Ontology Loader ---
 @st.cache_data(show_spinner="Loading keyword ontology...")
@@ -77,7 +96,8 @@ def load_ontology(ontology_path="ontology.json"):
         st.error(f"FATAL: Could not read or parse ontology file: {e}")
         return None
 
-# --- Gemini API Integration (Production Ready) ---
+# --- Gemini 
+API Integration (Production Ready) ---
 async def call_gemini_api(prompt):
     """Helper function to call the Gemini API."""
     api_key = st.secrets.get("GEMINI_API_KEY")

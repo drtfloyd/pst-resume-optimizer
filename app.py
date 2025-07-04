@@ -3,6 +3,7 @@ from PyPDF2 import PdfReader
 import string
 from io import BytesIO
 import zipfile
+import re
 
 # --- Page & UI Configuration ---
 st.set_page_config(
@@ -73,22 +74,50 @@ def extract_pdf_text(file):
         return ""
 
 def generate_signal_table(resume_file, jd_file):
-    """Analyzes resume against job description for keyword matching."""
+    """
+    Analyzes resume against job description for keyword matching with improved cleaning.
+    """
     resume_text = extract_pdf_text(resume_file)
     jd_text = extract_pdf_text(jd_file)
 
     if not resume_text or not jd_text:
-        return {}, 0.0, []
+        return [], 0.0, []
 
-    # Simple text cleaning
-    translator = str.maketrans('', '', string.punctuation)
-    resume_words = set(resume_text.lower().translate(translator).split())
-    jd_words = set(jd_text.lower().translate(translator).split())
-    
-    # Remove common stopwords to improve signal quality
-    stopwords = set(["and", "the", "is", "in", "a", "to", "of", "for", "with", "on", "as", "or", "at", "an"])
-    resume_words -= stopwords
-    jd_words -= stopwords
+    # Comprehensive list of stopwords
+    stopwords = set([
+        "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "as", "at",
+        "be", "because", "been", "before", "being", "below", "between", "both", "but", "by",
+        "can", "could", "did", "do", "does", "doing", "down", "during",
+        "each", "few", "for", "from", "further",
+        "had", "has", "have", "having", "he", "her", "here", "hers", "herself", "him", "himself", "his", "how",
+        "i", "if", "in", "into", "is", "it", "its", "itself",
+        "just", "me", "more", "most", "my", "myself",
+        "no", "nor", "not", "now", "of", "off", "on", "once", "only", "or", "other", "our", "ours", "ourselves", "out", "over", "own",
+        "s", "same", "she", "should", "so", "some", "such",
+        "t", "than", "that", "the", "their", "theirs", "them", "themselves", "then", "there", "these", "they", "this", "those", "through", "to", "too",
+        "under", "until", "up",
+        "very", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom", "why", "will", "with", "would",
+        "you", "your", "yours", "yourself", "yourselves",
+        "experience", "work", "company", "job", "role", "skills", "responsibilities", "requirements", "etc"
+    ])
+
+    def clean_and_extract_words(text):
+        # 1. Convert to lowercase
+        text = text.lower()
+        # 2. Remove URLs
+        text = re.sub(r'https?://\S+', '', text)
+        # 3. Remove email addresses
+        text = re.sub(r'\S+@\S+', '', text)
+        # 4. Remove punctuation and numbers
+        text = re.sub(f'[{re.escape(string.punctuation)}0-9]', '', text)
+        # 5. Split into words
+        words = text.split()
+        # 6. Remove stopwords and short words
+        meaningful_words = [word for word in words if word not in stopwords and len(word) > 2]
+        return set(meaningful_words)
+
+    resume_words = clean_and_extract_words(resume_text)
+    jd_words = clean_and_extract_words(jd_text)
 
     matched = jd_words & resume_words
     missing = jd_words - resume_words
@@ -96,6 +125,7 @@ def generate_signal_table(resume_file, jd_file):
     match_score = (len(matched) / len(jd_words)) * 100 if jd_words else 0.0
     
     return sorted(list(matched)), match_score, sorted(list(missing))
+
 
 def generate_cover_letter(resume_file, jd_file):
     return "Dear Hiring Manager,\n\nBased on your job description and my resume, I am confident I possess the skills and experience necessary to excel in this role..."

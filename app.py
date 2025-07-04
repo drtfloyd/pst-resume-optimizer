@@ -250,7 +250,6 @@ Suggest three specific resume bullet point rewrites or additions that incorporat
 
 [Job Description]
 {jd_text}
-"""
 
     from mistral_api import call_mistral_api
     response = await call_mistral_api(prompt)

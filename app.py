@@ -57,9 +57,22 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- License Entry ---
-license_key = st.sidebar.text_input("Enter your PSA™ License Key", type="password")
-current_license_tier = get_user_mode(license_key)
+# --- License Entry with State Handling ---
+if "license_key" not in st.session_state:
+    st.session_state["license_key"] = ""
+
+license_input = st.sidebar.text_input(
+    "Enter your PSA™ License Key",
+    value=st.session_state["license_key"],
+    type="password"
+)
+
+# Update session state on change
+if license_input != st.session_state["license_key"]:
+    st.session_state["license_key"] = license_input
+
+# Run license check
+current_license_tier = get_user_mode(st.session_state["license_key"])
 
 # --- License Check Logic ---
 if current_license_tier in ["pro", "enterprise"]:

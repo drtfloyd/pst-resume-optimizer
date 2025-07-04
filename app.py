@@ -233,15 +233,20 @@ def run_ontological_analysis(resume_file, jd_file, ontology):
     }
 
 # --- Placeholder functions for other features ---
+# --- Cover Letter Generator using Mistral ---
 async def generate_cover_letter(resume_text, jd_text, gaps):
     flat_gaps = [word for sublist in gaps.values() for word in sublist]
-    prompt = f"Based on the following resume, job description, and list of missing keywords ({', '.join(flat_gaps[:10])}), write a professional and concise cover letter."
-    return "📝 [AI feature temporarily disabled – Gemini removed]"
+    prompt = f"""Based on the following resume, job description, and list of missing keywords ({', '.join(flat_gaps[:10])}),
+write a professional and concise cover letter draft tailored to the role:
 
-async def generate_resume_rebuild(resume_text, jd_text, gaps):
-    flat_gaps = [word for sublist in gaps.values() for word in sublist]
-    prompt = f"Analyze the following resume and job description. The resume is missing these keywords: {', '.join(flat_gaps[:10])}. Generate three specific, rewritten bullet points."
-    return ["🛠 Resume rebuild feature temporarily offline – Gemini removed"]
+[Resume]
+{resume_text}
+
+[Job Description]
+{jd_text}
+"""
+    from mistral_api import call_mistral_api
+    return await call_mistral_api(prompt)
 
 # --- SIDEBAR UI ---
 with st.sidebar:

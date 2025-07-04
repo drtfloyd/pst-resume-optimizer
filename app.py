@@ -8,12 +8,13 @@ import json
 import os
 import pandas as pd
 import asyncio
+
 # --- Gemini API Key Verification ---
 api_key = st.secrets.get("api", {}).get("gemini_api_key")
-
 if not api_key:
     st.warning("🔐 Please add your Gemini API key to your Streamlit secrets to enable AI content generation.")
     st.stop()
+)
 
 # --- Page & UI Configuration ---
 st.set_page_config(

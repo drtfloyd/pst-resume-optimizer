@@ -13,47 +13,6 @@ import asyncio
 
 import requests
 
-# --- Flan-T5 API Call Function (PATCHED to flan-t5-base) ---
-async def call_mistral_api(prompt):
-    """Call open-weight model (Flan-T5-Base) from Hugging Face Inference API."""
-    api_key = st.secrets.get("huggingface", {}).get("api_key")
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens": 256,
-            "temperature": 0.7
-        }
-    }
-
-    try:
-        response = requests.post(
-            "https://api-inference.huggingface.co/models/google/flan-t5-base",
-            headers=headers,
-            json=payload
-        )
-
-        print(f"HF Status Code: {response.status_code}")
-        print(f"HF Raw Response: {response.text}")
-        response.raise_for_status()
-
-        data = response.json()
-        if isinstance(data, list) and "generated_text" in data[0]:
-            return data[0]["generated_text"]
-        else:
-            return f"⚠️ Unexpected JSON format: {data}"
-
-    except requests.exceptions.HTTPError as http_err:
-        return f"❌ HTTP Error: {http_err} – Full response: {response.text}"
-    except json.JSONDecodeError as json_err:
-        return f"❌ JSON Decode Error: {json_err} – Raw response: {response.text}"
-    except Exception as e:
-        return f"❌ General Error: {e}"
-        
 # --- Custom CSS for a Polished Look ---
 st.markdown("""
 <style>

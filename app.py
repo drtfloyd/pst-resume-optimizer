@@ -1,5 +1,6 @@
 from psa_license.license import get_user_mode
-import streamlit as stfrom PyPDF2 import PdfReader
+import streamlit as st
+from PyPDF2 import PdfReader
 import string
 from io import BytesIO
 import zipfile

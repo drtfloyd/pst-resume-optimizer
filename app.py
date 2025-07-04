@@ -234,7 +234,7 @@ else:
             with st.expander(f"🚨 {domain}{is_critical} - {len(domain_gaps[domain])} Gaps"):
                 st.markdown(f"<div style='display: flex; flex-wrap: wrap; gap: 5px;'>" + "".join([f"<span style='background-color: #e74c3c; color: white; padding: 5px 10px; border-radius: 15px; font-size: 14px;'>{word}</span>" for word in domain_gaps[domain]]) + "</div>", unsafe_allow_html=True)
 
-    with tab3:
-    st.header("🚧 AI Content Studio – Coming Soon")
-    st.info("This space will host AI-powered features like auto-generated cover letters and resume rewrites based on real-time job description matching.")
-    st.caption("Stay tuned! Advanced features will unlock for PSA™ Pro and Enterprise license holders.")
+    with tab3: # Corrected indentation for tab3 content
+        st.header("🚧 AI Content Studio – Coming Soon")
+        st.info("This space will host AI-powered features like auto-generated cover letters and resume rewrites based on real-time job description matching.")
+        st.caption("Stay tuned! Advanced features will unlock for PSA™ Pro and Enterprise license holders.")

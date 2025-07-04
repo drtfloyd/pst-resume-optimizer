@@ -234,20 +234,17 @@ def run_ontological_analysis(resume_file, jd_file, ontology):
 
 # --- Placeholder functions for other features ---
 # --- Cover Letter Generator using Mistral ---
+# --- Placeholder functions for other features ---
+# --- Cover Letter Generator using Mistral ---
 async def generate_cover_letter(resume_text, jd_text, gaps):
     flat_gaps = [word for sublist in gaps.values() for word in sublist]
-    prompt = f"""Based on the following resume, job description, and list of missing keywords ({', '.join(flat_gaps[:10])}),
+    # FIX: Handle empty flat_gaps for clearer prompt
+    keywords_for_prompt = ', '.join(flat_gaps[:10])
+    if not keywords_for_prompt:
+        keywords_for_prompt = "no specific keywords identified as missing"
+
+    prompt = f"""Based on the following resume, job description, and list of missing keywords ({keywords_for_prompt}),
 write a professional and concise cover letter draft tailored to the role:
-
-
-# --- Resume Rebuilder using Mistral ---
-async def generate_resume_rebuild(resume_text, jd_text, gaps):
-    flat_gaps = [word for sublist in gaps.values() for word in sublist]
-keywords = ', '.join(flat_gaps[:10])  # <-- add this line above the prompt
-prompt = Analyze the following resume and job description.
-The resume is missing these keywords: {keywords}.
-Suggest three specific resume bullet point rewrites or additions that incorporate those missing skills.
-
 
 [Resume]
 {resume_text}
@@ -255,8 +252,38 @@ Suggest three specific resume bullet point rewrites or additions that incorporat
 [Job Description]
 {jd_text}
 """
+    # Assuming mistral_api is a local module or correctly imported
+    # from mistral_api import call_mistral_api # This line is redundant if call_mistral_api is defined in the same file.
+    response = await call_mistral_api(prompt)
+    # The original code for generate_cover_letter truncated here.
+    # Assuming it should return the response as a list of lines for consistency with generate_resume_rebuild.
+    return response.strip().split('\n')
 
-    from mistral_api import call_mistral_api
+
+# --- Resume Rebuilder using Mistral ---
+async def generate_resume_rebuild(resume_text, jd_text, gaps):
+    flat_gaps = [word for sublist in gaps.values() for word in sublist]
+    # FIX: Handle empty flat_gaps for clearer prompt
+    keywords_for_prompt = ', '.join(flat_gaps[:10])
+    
+    # Adjusting the prompt based on whether there are missing keywords
+    if not keywords_for_prompt:
+        keywords_instruction = "No specific keywords were identified as missing from the resume based on the job description."
+    else:
+        keywords_instruction = f"The resume is missing these keywords: {keywords_for_prompt}."
+
+    prompt = f"""Analyze the following resume and job description.
+{keywords_instruction}
+Suggest three specific resume bullet point rewrites or additions that incorporate those missing skills.
+
+[Resume]
+{resume_text}
+
+[Job Description]
+{jd_text}
+"""
+    # Assuming mistral_api is a local module or correctly imported
+    # from mistral_api import call_mistral_api # This line is redundant if call_mistral_api is defined in the same file.
     response = await call_mistral_api(prompt)
     return response.strip().split('\n')
 

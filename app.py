@@ -236,7 +236,7 @@ def run_ontological_analysis(resume_file, jd_file, ontology):
 # --- Cover Letter Generator using Mistral ---
 async def generate_cover_letter(resume_text, jd_text, gaps):
     flat_gaps = [word for sublist in gaps.values() for word in sublist]
-    prompt = Based on the following resume, job description, and list of missing keywords ({', '.join(flat_gaps[:10])}),
+    prompt = f"""Based on the following resume, job description, and list of missing keywords ({', '.join(flat_gaps[:10])}),
 write a professional and concise cover letter draft tailored to the role:
 
 
@@ -254,7 +254,7 @@ Suggest three specific resume bullet point rewrites or additions that incorporat
 
 [Job Description]
 {jd_text}
-
+"""
 
     from mistral_api import call_mistral_api
     response = await call_mistral_api(prompt)

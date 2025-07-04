@@ -82,31 +82,16 @@ async def call_gemini_api(prompt):
     """Helper function to call the Gemini API."""
     api_key = st.secrets.get("GEMINI_API_KEY")
     if not api_key:
-        st.error("Gemini API key is not configured. Please add it to your Streamlit secrets.")
-        return "Error: API key not found."
+        # This check is now a fallback; the UI should prevent this from being called.
+        return "Error: API key not found. Please configure it in your Streamlit secrets."
 
     try:
         # NOTE: In a real async environment, you would use an async HTTP client like httpx.
-        # Streamlit's execution model makes true async challenging. This simulates the call
-        # but uses a blocking pattern that is standard for Streamlit button interactions.
         # This structure is production-ready for the Streamlit environment.
-        
         chat_history = [{"role": "user", "parts": [{"text": prompt}]}]
         payload = {"contents": chat_history}
         api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
         
-        # This is a simplified representation of an API call for Streamlit.
-        # A full async implementation would use a library like `httpx`.
-        # For now, we'll use a placeholder for the actual fetch call.
-        # In a real environment, you would replace this with:
-        #
-        # import httpx
-        # async with httpx.AsyncClient() as client:
-        #     response = await client.post(api_url, json=payload, timeout=120)
-        #     response.raise_for_status()
-        #     result = response.json()
-        #     return result['candidates'][0]['content']['parts'][0]['text']
-
         # Placeholder logic for demonstration without a live API call
         await asyncio.sleep(2)
         if "cover letter" in prompt.lower():
@@ -124,7 +109,12 @@ def extract_text_from_file(file):
     """Extracts text from an uploaded PDF or TXT file."""
     if file is None: return ""
     try:
-        return PdfReader(file).pages[0].extract_text() if file.type == "application/pdf" else file.getvalue().decode("utf-8")
+        if file.type == "application/pdf":
+            # Correctly handle multi-page PDFs
+            reader = PdfReader(file)
+            return "\n".join([page.extract_text() or "" for page in reader.pages])
+        else:
+            return file.getvalue().decode("utf-8")
     except Exception as e:
         st.warning(f"⚠️ Failed to extract text: {e}"); return ""
 
@@ -242,7 +232,6 @@ else:
         critical_domains = set(results['critical_domains'])
         domain_scores = results['domain_scores']
         
-        # Create a more detailed display with columns
         for domain, score in sorted(domain_scores.items(), key=lambda item: item[1], reverse=True):
             if domain in critical_domains:
                 st.markdown(f"**{domain} (Critical)**")
@@ -265,8 +254,14 @@ else:
     with tab3:
         st.header("AI-Powered Content Generation Studio")
         
+        # Check for API key at the beginning of the tab
+        api_key_present = "GEMINI_API_KEY" in st.secrets and st.secrets["GEMINI_API_KEY"] != ""
+
+        if not api_key_present:
+            st.warning("Please add your Gemini API key to your Streamlit secrets to enable AI content generation.", icon="🔐")
+
         st.subheader("✉️ Cover Letter Generator")
-        if st.button("Generate Cover Letter"):
+        if st.button("Generate Cover Letter", disabled=not api_key_present):
             with st.spinner("Drafting your cover letter..."):
                 st.session_state.cover_letter = asyncio.run(generate_cover_letter(results['resume_text'], results['jd_text'], results['domain_gaps']))
         if 'cover_letter' in st.session_state:
@@ -275,10 +270,12 @@ else:
         st.markdown("---")
         
         st.subheader("🧠 Resume Suggestions")
-        if st.button("Generate Resume Suggestions"):
+        if st.button("Generate Resume Suggestions", disabled=not api_key_present):
             with st.spinner("Developing resume suggestions..."):
                 st.session_state.resume_suggestions = asyncio.run(generate_resume_rebuild(results['resume_text'], results['jd_text'], results['domain_gaps']))
         if 'resume_suggestions' in st.session_state:
             st.info("Here are some action-oriented bullet points you can adapt for your resume:")
             for line in st.session_state.resume_suggestions:
                 st.markdown(f"{line}")
+        
+

@@ -23,7 +23,7 @@ def verify_license_key(key: str) -> bool:
 def get_user_mode(license_key: str):
     """Verifies license key against secrets.toml and returns license tier."""
     import streamlit as st
-    license_tiers = st.secrets.get("psa", {}).get("license_tiers", {})
+    license_tiers = st.secrets["psa"]["license_tiers"]
     return license_tiers.get(license_key.strip(), None)
     
     # First, verify if the key is generally valid (exists in our list of known keys)

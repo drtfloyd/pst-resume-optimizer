@@ -263,12 +263,6 @@ else:
     with tab3:
         st.header("AI-Powered Content Generation Studio")
         
-        # Check for API key at the beginning of the tab
-        api_key_present = "GEMINI_API_KEY" in st.secrets and st.secrets["GEMINI_API_KEY"] != ""
-
-        if not api_key_present:
-            st.warning("Please add your Gemini API key to your Streamlit secrets to enable AI content generation.", icon="🔐")
-
         st.subheader("✉️ Cover Letter Generator")
         if st.button("Generate Cover Letter", disabled=not api_key_present):
             with st.spinner("Drafting your cover letter..."):

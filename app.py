@@ -13,9 +13,9 @@ import asyncio
 
 import requests
 
-# --- Flan-T5 API Call Function ---
+# --- Flan-T5 API Call Function (PATCHED for flan-t5-xl) ---
 async def call_mistral_api(prompt):
-    """Call open-weight model (Flan-T5) from Hugging Face."""
+    """Call open-weight model (Flan-T5-XL) from Hugging Face (patched from flan-t5-large)."""
     api_key = st.secrets.get("huggingface", {}).get("api_key")
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -32,7 +32,7 @@ async def call_mistral_api(prompt):
 
     try:
         response = requests.post(
-            "https://api-inference.huggingface.co/models/google/flan-t5-large",
+            "https://api-inference.huggingface.co/models/google/flan-t5-xl",
             headers=headers,
             json=payload
         )
@@ -48,16 +48,15 @@ async def call_mistral_api(prompt):
         if isinstance(data, list) and "generated_text" in data[0]:
             return data[0]["generated_text"]
         else:
-            return f"⚠️ Mistral returned unexpected JSON format: {data}"
+            return f"⚠️ Hugging Face returned unexpected JSON format: {data}"
 
     except requests.exceptions.HTTPError as http_err:
-        return f"❌ HTTP Error calling Mistral: {http_err} – Full response: {response.text}"
+        return f"❌ HTTP Error calling HF Inference: {http_err} – Full response: {response.text}"
     except json.JSONDecodeError as json_err:
-        return f"❌ JSON Decoding Error from Mistral: {json_err} – Raw response: {response.text}"
+        return f"❌ JSON Decoding Error: {json_err} – Raw response: {response.text}"
     except Exception as e:
-        return f"❌ General Error calling Mistral: {e}"
-
-
+        return f"❌ General Error calling HF Inference: {e}"
+        
 # --- Custom CSS for a Polished Look ---
 st.markdown("""
 <style>

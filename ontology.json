@@ -39,95 +39,95 @@
   },
   "SOC_Groups": {
     "Management Occupations": {
-      "examples": ["Executives", "Operations Managers", "Education Administrators"],
+      "example_titles": ["Executives", "Operations Managers", "Education Administrators"],
       "signal_domains": ["Leadership & Influence", "Systems & Structure", "Outcomes & Impact"]
     },
     "Business and Financial Operations Occupations": {
-      "examples": ["Accountants", "Financial Analysts", "HR Specialists"],
+      "example_titles": ["Accountants", "Financial Analysts", "HR Specialists"],
       "signal_domains": ["Data & Evidence", "Risk & Compliance", "Systems & Structure"]
     },
     "Computer and Mathematical Occupations": {
-      "examples": ["Software Developers", "Data Scientists", "Statisticians"],
+      "example_titles": ["Software Developers", "Data Scientists", "Statisticians"],
       "signal_domains": ["AI & Technical Literacy", "Systems & Structure", "Data & Evidence"]
     },
     "Architecture and Engineering Occupations": {
-      "examples": ["Civil Engineers", "Architects", "Mechanical Engineers"],
+      "example_titles": ["Civil Engineers", "Architects", "Mechanical Engineers"],
       "signal_domains": ["Systems & Structure", "Outcomes & Impact", "AI & Technical Literacy"]
     },
     "Life, Physical, and Social Science Occupations": {
-      "examples": ["Biologists", "Chemists", "Psychologists", "Sociologists"],
+      "example_titles": ["Biologists", "Chemists", "Psychologists", "Sociologists"],
       "signal_domains": ["Data & Evidence", "Learning & Instruction", "Equity & Inclusion"]
     },
     "Legal Occupations": {
-      "examples": ["Lawyers", "Paralegals", "Judges"],
+      "example_titles": ["Lawyers", "Paralegals", "Judges"],
       "signal_domains": ["Risk & Compliance", "Communication Strategy", "Leadership & Influence"]
     },
     "Education, Training, and Library Occupations": {
-      "examples": ["Teachers", "Instructional Designers", "Librarians"],
+      "example_titles": ["Teachers", "Instructional Designers", "Librarians"],
       "signal_domains": ["Learning & Instruction", "Communication Strategy", "Equity & Inclusion"]
     },
     "Healthcare Practitioners and Technical Occupations": {
-      "examples": ["Nurses", "Physicians", "Pharmacists"],
+      "example_titles": ["Nurses", "Physicians", "Pharmacists"],
       "signal_domains": ["Outcomes & Impact", "Risk & Compliance", "Collaboration & Relational Work"]
     },
     "Healthcare Support Occupations": {
-      "examples": ["Home Health Aides", "Medical Assistants", "Dental Assistants"],
+      "example_titles": ["Home Health Aides", "Medical Assistants", "Dental Assistants"],
       "signal_domains": ["Equity & Inclusion", "Collaboration & Relational Work", "Adaptation & Flexibility"]
     },
     "Arts, Design, Entertainment, Sports, and Media Occupations": {
-      "examples": ["Graphic Designers", "Editors", "Actors", "Marketing Specialists"],
+      "example_titles": ["Graphic Designers", "Editors", "Actors", "Marketing Specialists"],
       "signal_domains": ["Communication Strategy", "Presence & Identity", "Learning & Instruction"]
     },
     "Protective Service Occupations": {
-      "examples": ["Police Officers", "Security Guards", "Firefighters"],
+      "example_titles": ["Police Officers", "Security Guards", "Firefighters"],
       "signal_domains": ["Risk & Compliance", "Leadership & Influence", "Adaptation & Flexibility"]
     },
     "Food Preparation and Serving Related Occupations": {
-      "examples": ["Cooks", "Servers", "Bartenders"],
+      "example_titles": ["Cooks", "Servers", "Bartenders"],
       "signal_domains": ["Adaptation & Flexibility", "Collaboration & Relational Work", "Outcomes & Impact"]
     },
     "Building and Grounds Cleaning and Maintenance Occupations": {
-      "examples": ["Janitors", "Landscapers", "Pest Control Workers"],
+      "example_titles": ["Janitors", "Landscapers", "Pest Control Workers"],
       "signal_domains": ["Systems & Structure", "Adaptation & Flexibility"]
     },
     "Personal Care and Service Occupations": {
-      "examples": ["Childcare Workers", "Personal Care Aides", "Hairstylists"],
+      "example_titles": ["Childcare Workers", "Personal Care Aides", "Hairstylists"],
       "signal_domains": ["Equity & Inclusion", "Presence & Identity", "Collaboration & Relational Work"]
     },
     "Sales and Related Occupations": {
-      "examples": ["Retail Salespersons", "Real Estate Agents", "Sales Managers"],
+      "example_titles": ["Retail Salespersons", "Real Estate Agents", "Sales Managers"],
       "signal_domains": ["Communication Strategy", "Outcomes & Impact", "Presence & Identity"]
     },
     "Office and Administrative Support Occupations": {
-      "examples": ["Receptionists", "Clerks", "Customer Service Representatives"],
+      "example_titles": ["Receptionists", "Clerks", "Customer Service Representatives"],
       "signal_domains": ["Systems & Structure", "Communication Strategy", "Risk & Compliance"]
     },
     "Farming, Fishing, and Forestry Occupations": {
-      "examples": ["Agricultural Workers", "Loggers", "Fishers"],
+      "example_titles": ["Agricultural Workers", "Loggers", "Fishers"],
       "signal_domains": ["Adaptation & Flexibility", "Systems & Structure"]
     },
     "Construction and Extraction Occupations": {
-      "examples": ["Electricians", "Plumbers", "Construction Laborers"],
+      "example_titles": ["Electricians", "Plumbers", "Construction Laborers"],
       "signal_domains": ["Systems & Structure", "Outcomes & Impact", "Adaptation & Flexibility"]
     },
     "Installation, Maintenance, and Repair Occupations": {
-      "examples": ["Mechanics", "HVAC Technicians", "Line Installers"],
+      "example_titles": ["Mechanics", "HVAC Technicians", "Line Installers"],
       "signal_domains": ["AI & Technical Literacy", "Systems & Structure", "Outcomes & Impact"]
     },
     "Production Occupations": {
-      "examples": ["Assemblers", "Machinists", "Bakers"],
+      "example_titles": ["Assemblers", "Machinists", "Bakers"],
       "signal_domains": ["Outcomes & Impact", "Systems & Structure"]
     },
     "Transportation and Material Moving Occupations": {
-      "examples": ["Truck Drivers", "Delivery Workers", "Forklift Operators"],
+      "example_titles": ["Truck Drivers", "Delivery Workers", "Forklift Operators"],
       "signal_domains": ["Adaptation & Flexibility", "Systems & Structure"]
     },
     "Community and Social Service Occupations": {
-      "examples": ["Social Workers", "Counselors", "Religious Workers"],
+      "example_domains": ["Social Workers", "Counselors", "Religious Workers"],
       "signal_domains": ["Equity & Inclusion", "Presence & Identity", "Collaboration & Relational Work"]
     },
     "Military Specific Occupations": {
-      "examples": ["Enlisted Military", "Officer Military Roles"],
+      "example_titles": ["Enlisted Military", "Officer Military Roles"],
       "signal_domains": ["Leadership & Influence", "Risk & Compliance", "Adaptation & Flexibility"]
     }
   }
